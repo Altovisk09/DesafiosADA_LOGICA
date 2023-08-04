@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculadora de IMC</title>
+</head>
+<body>
+    <script>
+        function IMC() {
+            const peso = parseFloat(prompt("Digite o seu peso em kg:"));
+            const altura = parseFloat(prompt("Digite a sua altura em metros:"));
+            const imc = peso / (altura * altura)
+            const imcFormatado = imc.toFixed(1);
+
+            if (imc < 18.5) {
+                alert(`Seu IMC é de ${imcFormatado}, você está abaixo do peso ideal`);
+            } else if (imc >= 18.5 && imc <= 24.9) {
+                alert(`Seu IMC é de ${imcFormatado}, você está no peso ideal`);
+            } else if (imc >= 25 && imc <= 29.9) {
+                alert(`Seu IMC é de ${imcFormatado}, você está com sobrepeso`);
+            } else if (imc > 30) {
+                alert(`Seu IMC é de ${imcFormatado}, você está obeso`);
+            }
+        }
+        IMC();
+    </script>
+</body>
+</html>
