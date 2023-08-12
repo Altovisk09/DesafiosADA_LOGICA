@@ -100,7 +100,7 @@ const metodoAluno = {
                 cpf: prompt('Insira seu CPF'),
                 email: prompt('Insira seu email'),
                 turma: parseInt(prompt('Insira o código da turma que a qual irá ingressar.')),
-                nascimento: prompt('Insira sua data de nascimento (AAAA-MM-DD).'),
+                nascimento: prompt('Insira sua data de nascimento (DD-MM-AAAA).'),
                 notas: [prompt('Insira suas notas (Separe por vírgula)')],
                 ativo: true
             };
@@ -197,8 +197,20 @@ const metodoAdm = {
         // Lógica de atualização de informações do aluno
     },
 
-    AlunoEspecifico: function () {
-        // Lógica de busca de aluno específico
+    MediaAlunoEspecifico: function () {
+        const alunosJSON = localStorage.getItem('alunos');
+        const turmasJSON = localStorage.getItem('turmas')
+        const alunos = JSON.parse(alunosJSON);
+        const turmas = JSON.parse(turmasJSON);
+        alert('Você selecionou Buscar aluno especifico.');
+        let alunoId = prompt('Qual o id do aluno que está buscando?');
+        let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId);
+        let turmaAluno = turmas.find(turma=> turma.id == alunoEncontrado.turma);
+        if(alunoEncontrado && turmaAluno){
+            alert(`Aluno encontrado!\nnome do aluno: ${alunoEncontrado.nome} ${alunoEncontrado.sobrenome}\nCPF: ${alunoEncontrado.cpf}\nEmail do aluno: ${alunoEncontrado.email}\nTurma do aluno(id): ${turmaAluno.id}\nTurma do aluno(sigla): ${turmaAluno.nome}\nData de nascimento do aluno: ${alunoEncontrado.nascimento}\nNotas do aluno: ${alunoEncontrado.notas}\nAluno ativo: ${alunoEncontrado.ativo}`);
+        }else{
+            alert('Algo deu errado')
+        }
     },
 
     ListaCompletaAlunos: function () {
@@ -218,7 +230,7 @@ const metodoAdm = {
     },
 
     ListaAlunosAtivos: function () {
-        // Lógica de retorno da lista de alunos ativos
+        
     },
 
     ListaAlunosInativos: function () {
@@ -292,7 +304,7 @@ function processo() {
                             validacoes.reset();
                             return;
                         case "6":
-                            metodoAdm.calcularMediaAluno();
+                            metodoAdm.MediaAlunoEspecifico();
                             validacoes.reset();
                             return;
                         case "7":
@@ -316,7 +328,7 @@ function processo() {
                             validacoes.reset();
                             return;
                         case "12":
-
+                            metodoAdm.AlunoEspecifico();
                             validacoes.reset();
                             return;
                         default:
