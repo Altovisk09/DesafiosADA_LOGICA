@@ -209,21 +209,45 @@ const metodoAdm = {
         if(alunoEncontrado && turmaAluno){
             alert(`Aluno encontrado!\nnome do aluno: ${alunoEncontrado.nome} ${alunoEncontrado.sobrenome}\nCPF: ${alunoEncontrado.cpf}\nEmail do aluno: ${alunoEncontrado.email}\nTurma do aluno(id): ${turmaAluno.id}\nTurma do aluno(sigla): ${turmaAluno.nome}\nData de nascimento do aluno: ${alunoEncontrado.nascimento}\nNotas do aluno: ${alunoEncontrado.notas}\nAluno ativo: ${alunoEncontrado.ativo}`);
         }else{
-            alert('Algo deu errado')
+            alert('Aluno não encontrado.')
         }
     },
 
     ListaCompletaAlunos: function () {
-        // Lógica de retorno da lista completa de alunos
+        
     },
 
     QuantidadeTurmas: function () {
-        // Lógica de retorno da quantidade de turmas
+       const turmasJSON = localStorage.getItem('turmas');
+       const turmas = JSON.parse(turmasJSON);
+       let textoDinamico = turmas.length === 1 ? "turma registrada":"turmas registradas";
+        if(turmas){
+            alert(`Temos ${turmas.length} ${textoDinamico} no nosso sistema.`)
+        }else{
+            alert("Algo deu errado.")
+        };
     },
 
-    calcularMediaAluno: function () {
-        // Lógica de cálculo de média de aluno para análise
+    mediaAlunoEspecifico: function () {
+        const alunosJSON = localStorage.getItem('alunos');
+        const alunos = JSON.parse(alunosJSON);
+        let alunoId = prompt('Qual o id do aluno que você está buscando.');
+        let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId);
+    
+        if (alunoEncontrado) {
+            const notas = alunoEncontrado.notas;
+            if (notas.length > 0) {
+                const somaNotas = notas.reduce((total, nota) => total + parseFloat(nota), 0);
+                const media = somaNotas / notas.length;
+                alert(`A média do aluno ${alunoEncontrado.nome} ${alunoEncontrado.sobrenome} é ${media.toFixed(2)}`);
+            } else {
+                alert(`O aluno ${alunoEncontrado.nome} ${alunoEncontrado.sobrenome} ainda não possui notas.`);
+            }
+        } else {
+            alert('Aluno não encontrado.');
+        }
     },
+    
 
     desativarAluno: function () {
         // Lógica de desativação de aluno
@@ -300,11 +324,11 @@ function processo() {
                             validacoes.reset();
                             return;
                         case "5":
-                            metodoAdm.retornarQuantidadeTurmas();
+                            metodoAdm.QuantidadeTurmas();
                             validacoes.reset();
                             return;
                         case "6":
-                            metodoAdm.MediaAlunoEspecifico();
+                            metodoAdm.mediaAlunoEspecifico();
                             validacoes.reset();
                             return;
                         case "7":
