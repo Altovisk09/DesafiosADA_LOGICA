@@ -709,13 +709,94 @@ const metodoAluno = {
         });
     },
     atualizarInfo: function () {
+        const alunosJSON = localStorage.getItem('alunos');
+        let alunos = JSON.parse(alunosJSON);
 
+        let alunoId = prompt('Qual o número da sua matrícula?');
+        let alunoIndex = alunos.findIndex(aluno => aluno.id == alunoId);
+
+        if (alunoIndex !== -1) {
+            let aluno = alunos[alunoIndex];
+
+            let continuar = true;
+            while (continuar) {
+                let opcao = prompt(`Escolha o que deseja atualizar:\n1- Nome: ${aluno.nome}\n2- Sobrenome: ${aluno.sobrenome}\n3- CPF: ${aluno.cpf}\n4- Email: ${aluno.email}\n5- Data de Nascimento: ${aluno.nascimento}\n6- Encerrar`);
+
+                switch (opcao) {
+                    case '1':
+                        let novoNome = prompt('Digite o novo nome:');
+                        aluno.nome = novoNome || aluno.nome;
+                        break;
+                    case '2':
+                        let novoSobrenome = prompt('Digite o novo sobrenome:');
+                        aluno.sobrenome = novoSobrenome || aluno.sobrenome;
+                        break;
+                    case '3':
+                        let novoCPF = prompt('Digite o novo CPF:');
+                        aluno.cpf = novoCPF || aluno.cpf;
+                        break;
+                    case '4':
+                        let novoEmail = prompt('Digite o novo email:');
+                        aluno.email = novoEmail || aluno.email;
+                        break;
+                    case '5':
+                        let novoNascimento = prompt('Digite a nova data de nascimento:');
+                        aluno.nascimento = novoNascimento || aluno.nascimento;
+                        break;
+                    case '6':
+                        continuar = false;
+                        break;
+                    default:
+                        alert('Opção inválida. Escolha uma opção válida.');
+                }
+            }
+
+            localStorage.setItem('alunos', JSON.stringify(alunos));
+            alert('Suas informações foram atualizadas com sucesso.');
+        } else {
+            alert('Matrícula não encontrada. Verifique o número da matrícula digitado.');
+        }
     },
     calcularMedia: function () {
+        const alunosJSON = localStorage.getItem('alunos');
+        const alunos = JSON.parse(alunosJSON);
+        let alunoId = prompt('Qual o numero da sua matricula?');
+        let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId);
 
+        if (alunoEncontrado) {
+            alert(`Olá ${alunoEncontrado.nome}`)
+            const notas = alunoEncontrado.notas;
+            if (notas.length > 0) {
+                const somaNotas = notas.reduce((total, nota) => total + parseFloat(nota), 0);
+                const media = somaNotas / notas.length;
+                let msgDinamica = media < 6 ? "você foi reprovado..." : "você foi aprovado!"
+                alert(`Sua média é ${media.toFixed(2)}, ${msgDinamica} `);
+            } else {
+                alert(`você ainda não possui notas.`);
+            }
+        } else {
+            alert('Matricula não encontrada ou incorreta.');
+        }
     },
     cancelarMatricula: function () {
-
+        const alunosJSON = localStorage.getItem('alunos');
+        const alunos = JSON.parse(alunosJSON);
+        let alunoId = prompt('Qual o numero da sua matricula?');
+        let alunoIndex = alunos.findIndex(aluno => aluno.id == alunoId);
+        if (alunoIndex !== -1) {
+            if (alunos[alunoIndex].ativo) {
+                let confirmacao = confirm('Tem certeza que quer tornar sua matricula inativa?');
+                if (confirmacao) {
+                    alunos[alunoIndex].ativo = false;
+                    localStorage.setItem('alunos', JSON.stringify(alunos));
+                    alert("Sua matricula está inativa.")
+                }
+            } else {
+                alert('Você já está com a matricula inativa. Entre em contato com a secretaria.');
+            }
+        } else {
+            alert('Matrícula não encontrada. Verifique o número da matrícula digitado.');
+        }
     }
 };
 
@@ -753,13 +834,14 @@ const metodoAdm = {
         let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId);
         if (!alunoEncontrado) {
             alert('Aluno não encontrado')
-        } else if (!alunoEncontrado.ativo) {
+        } else if (!alunoEncontrado.ativo){
             const alunosAtt = alunos.filter(alunos => alunos.id !== alunoEncontrado.id);
             const turmasAtt = turmas.map(turma => {
                 if (turma.alunos.includes(alunoEncontrado.id)) {
+                    alert(`Informações e cadastro do aluno ${alunoEncontrado.nome} ${alunoEncontrado.sobrenome}.`)
                     return {
                         ...turma,
-                        alunos: turma.alunos.filter(id => id !== alunoEncontrado.id)
+                        alunos: turma.alunos.filter(id => id !== alunoEncontrado.id);
                     };
                 }
                 return turma;
@@ -771,12 +853,63 @@ const metodoAdm = {
             alert('Aluno se encontra ativo no momento, não será possível apagar suas informações.');
         }
     },
-
     atualizarInfoAluno: function () {
-        // Lógica de atualização de informações do aluno
-    },
+        const alunosJSON = localStorage.getItem('alunos');
+        let alunos = JSON.parse(alunosJSON);
 
-    MediaAlunoEspecifico: function () {
+        const turmasJSON = localStorage.getItem('turmas');
+        let turmas = JSON.parse(turmasJSON);
+
+        let alunoId = prompt('Qual o numero da matricula do aluno que deseja atualizar?');
+        let alunoIndex = alunos.findIndex(aluno => aluno.id == alunoId);
+
+        if (alunoIndex !== -1) {
+            let aluno = alunos[alunoIndex];
+
+            let continuar = true;
+            while (continuar) {
+                let opcao = prompt(`Escolha o que deseja atualizar:\n1. Nome: ${aluno.nome}\n2. Sobrenome: ${aluno.sobrenome}\n3. CPF: ${aluno.cpf}\n4. Email: ${aluno.email}\n5. Data de Nascimento: ${aluno.nascimento}\n6. Turma: ${aluno.turma}\n7. Encerrar`);
+
+                switch (opcao) {
+                    case '1':
+                        let novoNome = prompt('Digite o novo nome:');
+                        aluno.nome = novoNome || aluno.nome;
+                        break;
+                    case '2':
+                        let novoSobrenome = prompt('Digite o novo sobrenome:');
+                        aluno.sobrenome = novoSobrenome || aluno.sobrenome;
+                        break;
+                    case '3':
+                        let novoCPF = prompt('Digite o novo CPF:');
+                        aluno.cpf = novoCPF || aluno.cpf;
+                        break;
+                    case '4':
+                        let novoEmail = prompt('Digite o novo email:');
+                        aluno.email = novoEmail || aluno.email;
+                        break;
+                    case '5':
+                        let novoNascimento = prompt('Digite a nova data de nascimento:');
+                        aluno.nascimento = novoNascimento || aluno.nascimento;
+                        break;
+                    case '6':
+                        // Adicionar aluno à nova turma
+                      
+                        break;
+                    case '7':
+                        continuar = false;
+                        break;
+                    default:
+                        alert('Opção invalida. Escolha uma opção valida.');
+                }
+            }
+            localStorage.setItem('alunos', JSON.stringify(alunos));
+            localStorage.setItem('turmas', JSON.stringify(turmas));
+            alert('As informações do aluno foram atualizadas com sucesso.');
+        } else {
+            alert('Matricula não encontrada. Verifique o numero da matricula digitado.');
+        }
+    },
+    AlunoEspecifico: function () {
         const alunosJSON = localStorage.getItem('alunos');
         const turmasJSON = localStorage.getItem('turmas')
         const alunos = JSON.parse(alunosJSON);
@@ -838,10 +971,18 @@ const metodoAdm = {
             alert('Aluno não encontrado.');
         }
     },
-
-
+    
     desativarAluno: function () {
-        // Lógica de desativação de aluno
+        const alunosJSON = localStorage.getItem('alunos');
+        const alunos = JSON.parse(alunosJSON);
+
+        let alunoId = prompt('Insira a matricula que deseja desativar.');
+        let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId)
+        if(alunoEncontrado.ativo){
+            
+        }else{
+            alert('A matricula inserida não existe ou já está desativada.');
+        }
     },
 
     ListaAlunosAtivos: function () {
@@ -881,12 +1022,12 @@ const metodoAdm = {
     AlunosMediaEsperada: function () {
         const alunosJSON = localStorage.getItem('alunos');
         const alunos = JSON.parse(alunosJSON);
-        
+
         let alunosAprovados = [];
-        for(const aluno of alunos){
-            const notaSomada = aluno.notas.reduce((acc, nota)=> acc + nota, 0);
+        for (const aluno of alunos) {
+            const notaSomada = aluno.notas.reduce((acc, nota) => acc + nota, 0);
             const media = notaSomada / aluno.notas.length;
-            if(media >= 6){
+            if (media >= 6) {
                 aluno.media = media;
                 alunosAprovados.push(aluno);
             }
@@ -896,6 +1037,7 @@ const metodoAdm = {
             for (const aluno of alunosAprovados) {
                 mensagem += `Nome: ${aluno.nome} ${aluno.sobrenome}, Turma: ${aluno.turma}, Média: ${aluno.media.toFixed(2)}\n`;
             }
+            console.log(mensagem);
             alert(mensagem);
         } else {
             alert('Não há alunos aprovados com média maior que 6.');
@@ -920,6 +1062,7 @@ function processo() {
 
                     switch (opcao) {
                         case "1":
+                            metodoAluno.calcularMedia();
                             validacoes.reset();
                             return;
                         case "2":
@@ -941,7 +1084,7 @@ function processo() {
                     return;
                 case "3":
                     alert('Você selecionou a opção "Sou ADM".');
-                    const opcaoADM = prompt('Digite o número que corresponder à ação desejada:\n\n1: Cadastrar turma\n2: Atualizar informações da conta\n3: Cancelamento da matrícula\n4: Retornar a lista completa de alunos\n5: Retornar quantas turmas tem na escola\n6: Calcular a média do aluno\n7: Desativar aluno\n8: Retornar a lista apenas com alunos ativos\n9: Retornar a lista apenas com alunos inativos\n10: Retornar os alunos com a média esperada\n11: Relatório completo');
+                    const opcaoADM = prompt('Digite o número que corresponder à ação desejada:\n\n1: Cadastrar turma\n2: Atualizar informações de aluno\n3: Cancelamento da matrícula\n4: Retornar a lista completa de alunos\n5: Retornar quantas turmas tem na escola\n6: Calcular a média do aluno\n7: Desativar aluno\n8: Retornar a lista apenas com alunos ativos\n9: Retornar a lista apenas com alunos inativos\n10: Retornar os alunos com a média esperada\n11: Relatório completo\n12: Buscar aluno');
 
                     switch (opcaoADM) {
                         case "1":
@@ -949,7 +1092,7 @@ function processo() {
                             validacoes.reset();
                             return;
                         case "2":
-                            metodoAdm.atualizarInfo();
+                            metodoAdm.atualizarInfoAluno();
                             validacoes.reset();
                             return;
                         case "3":
