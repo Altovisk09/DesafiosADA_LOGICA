@@ -57,7 +57,7 @@ const alunosBase = [
         email: "ana.souza@example.com",
         turma: 1,
         nascimento: "15-03-2008",
-        notas: [9.5, 8.7, 7.2],
+        notas: [7.5, 8.2, 9.0],
         ativo: false
     },
     {
@@ -68,7 +68,7 @@ const alunosBase = [
         email: "joao.silva@example.com",
         turma: 2,
         nascimento: "05-07-2007",
-        notas: [8.0, 7.5, 6.9],
+        notas: [6, 7.8, 4.5],
         ativo: true
     },
     {
@@ -79,7 +79,7 @@ const alunosBase = [
         email: "mariana.lima@example.com",
         turma: 3,
         nascimento: "20-01-2005",
-        notas: [6.7, 8.2, 9.0],
+        notas: [5.2, 4.8, 3.7],
         ativo: true
     },
     {
@@ -90,7 +90,7 @@ const alunosBase = [
         email: "pedro.ferreira@example.com",
         turma: 4,
         nascimento: "10-11-2006",
-        notas: [7.8, 9.2, 8.5],
+        notas: [2.9, 4.4, 5.1],
         ativo: false
     },
     {
@@ -101,7 +101,7 @@ const alunosBase = [
         email: "julia.santos@example.com",
         turma: 5,
         nascimento: "25-09-2003",
-        notas: [9.0, 8.5, 7.7],
+        notas: [3.5, 2.8, 4.6],
         ativo: true
     },
     {
@@ -112,7 +112,7 @@ const alunosBase = [
         email: "lucas.oliveira@example.com",
         turma: 6,
         nascimento: "08-02-2004",
-        notas: [7.5, 8.1, 6.4],
+        notas: [7.1, 8.7, 6.9],
         ativo: false
     },
     {
@@ -145,7 +145,7 @@ const alunosBase = [
         email: "sophia.fernandes@example.com",
         turma: 1,
         nascimento: "18-04-2007",
-        notas: [8.7, 6.9, 7.8],
+        notas: [5.2, 4.8, 3.7],
         ativo: true
     },
     {
@@ -178,7 +178,7 @@ const alunosBase = [
         email: "pedro.almeida@example.com",
         turma: 4,
         nascimento: "14-07-2006",
-        notas: [6.5, 7.9, 8.1],
+        notas: [2.9, 4.4, 5.1],
         ativo: false
     },
     {
@@ -189,7 +189,7 @@ const alunosBase = [
         email: "camila.machado@example.com",
         turma: 5,
         nascimento: "02-11-2005",
-        notas: [9.4, 8.7, 7.0],
+        notas: [3.5, 2.8, 4.6],
         ativo: true
     },
     {
@@ -211,7 +211,7 @@ const alunosBase = [
         email: "laura.ribeiro@example.com",
         turma: 7,
         nascimento: "05-04-2004",
-        notas: [8.3, 9.6, 7.5],
+        notas: [5.9, 6.3, 4.8],
         ativo: false
     },
     {
@@ -233,7 +233,7 @@ const alunosBase = [
         email: "beatriz.santana@example.com",
         turma: 1,
         nascimento: "17-10-2006",
-        notas: [7.1, 9.8, 6.7],
+        notas: [3.7, 4.1, 5.5],
         ativo: false
     },
     {
@@ -255,7 +255,7 @@ const alunosBase = [
         email: "marina.carvalho@example.com",
         turma: 3,
         nascimento: "09-03-2004",
-        notas: [9.7, 8.4, 6.9],
+        notas: [2.5, 2.9, 3.3],
         ativo: true
     },
     {
@@ -288,7 +288,7 @@ const alunosBase = [
         email: "lucas.rocha@example.com",
         turma: 6,
         nascimento: "20-11-2006",
-        notas: [7.9, 9.4, 8.1],
+        notas: [5.6, 6.1, 4.4],
         ativo: false
     },
     {
@@ -299,7 +299,7 @@ const alunosBase = [
         email: "amanda.campos@example.com",
         turma: 7,
         nascimento: "03-02-2005",
-        notas: [6.8, 8.7, 9.3],
+        notas: [6.4, 6.9, 5.1],
         ativo: true
     },
     {
@@ -321,7 +321,7 @@ const alunosBase = [
         email: "juliana.alves@example.com",
         turma: 1,
         nascimento: "30-06-2004",
-        notas: [7.2, 8.9, 6.7],
+        notas: [2.2, 2.7, 3.1],
         ativo: false
     },
     {
@@ -751,9 +751,9 @@ const metodoAdm = {
         alert('Você selecionou remover aluno.');
         let alunoId = prompt('Qual o numero da matricula do aluno?');
         let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId);
-        if(!alunoEncontrado){
+        if (!alunoEncontrado) {
             alert('Aluno não encontrado')
-        }else if(!alunoEncontrado.ativo){
+        } else if (!alunoEncontrado.ativo) {
             const alunosAtt = alunos.filter(alunos => alunos.id !== alunoEncontrado.id);
             const turmasAtt = turmas.map(turma => {
                 if (turma.alunos.includes(alunoEncontrado.id)) {
@@ -764,7 +764,7 @@ const metodoAdm = {
                 }
                 return turma;
             });
-    
+
             localStorage.setItem('alunos', JSON.stringify(alunosAtt));
             localStorage.setItem('turmas', JSON.stringify(turmasAtt)); // Atualiza a lista de turmas
         } else {
@@ -784,25 +784,37 @@ const metodoAdm = {
         alert('Você selecionou Buscar aluno especifico.');
         let alunoId = prompt('Qual o id do aluno que está buscando?');
         let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId);
-        let turmaAluno = turmas.find(turma=> turma.id == alunoEncontrado.turma);
-        if(alunoEncontrado && turmaAluno){
+        let turmaAluno = turmas.find(turma => turma.id == alunoEncontrado.turma);
+        if (alunoEncontrado && turmaAluno) {
             alert(`Aluno encontrado!\nnome do aluno: ${alunoEncontrado.nome} ${alunoEncontrado.sobrenome}\nCPF: ${alunoEncontrado.cpf}\nEmail do aluno: ${alunoEncontrado.email}\nTurma do aluno(id): ${turmaAluno.id}\nTurma do aluno(sigla): ${turmaAluno.nome}\nData de nascimento do aluno: ${alunoEncontrado.nascimento}\nNotas do aluno: ${alunoEncontrado.notas}\nAluno ativo: ${alunoEncontrado.ativo}`);
-        }else{
+        } else {
             alert('Aluno não encontrado.')
         }
     },
 
     ListaCompletaAlunos: function () {
-        
+        const alunosJSON = localStorage.getItem('alunos');
+        const alunos = JSON.parse(alunosJSON);
+
+        if (alunos) {
+            let mensagem = (`Todos os alunos na base de dados: Total: ${alunos.length}\n\n`);
+            for (const aluno of alunos) {
+                mensagem += `Nome: ${aluno.nome} ${aluno.sobrenome}, Matricula: ${aluno.id}, Turma: ${aluno.turma}\n`;
+            }
+            console.log(mensagem)
+            alert(mensagem);
+        } else {
+            alert('Não há alunos cadastrados em nossa base de dados.')
+        }
     },
 
     QuantidadeTurmas: function () {
-       const turmasJSON = localStorage.getItem('turmas');
-       const turmas = JSON.parse(turmasJSON);
-       let textoDinamico = turmas.length === 1 ? "turma registrada":"turmas registradas";
-        if(turmas){
+        const turmasJSON = localStorage.getItem('turmas');
+        const turmas = JSON.parse(turmasJSON);
+        let textoDinamico = turmas.length === 1 ? "turma registrada" : "turmas registradas";
+        if (turmas) {
             alert(`Temos ${turmas.length} ${textoDinamico} no nosso sistema.`)
-        }else{
+        } else {
             alert("Algo deu errado.")
         };
     },
@@ -812,7 +824,7 @@ const metodoAdm = {
         const alunos = JSON.parse(alunosJSON);
         let alunoId = prompt('Qual o id do aluno que você está buscando.');
         let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId);
-    
+
         if (alunoEncontrado) {
             const notas = alunoEncontrado.notas;
             if (notas.length > 0) {
@@ -826,7 +838,7 @@ const metodoAdm = {
             alert('Aluno não encontrado.');
         }
     },
-    
+
 
     desativarAluno: function () {
         // Lógica de desativação de aluno
@@ -838,13 +850,14 @@ const metodoAdm = {
         let alunosAtivos = alunos.filter(aluno => aluno.ativo);
 
         if (alunosAtivos.length > 0) {
-            let output = `Lista de Alunos Ativos: ${alunosAtivos.length}\n\n`;
+            let mensagem = `Lista de Alunos Ativos: ${alunosAtivos.length}\n\n`;
             for (const aluno of alunosAtivos) {
-                output += `Nome: ${aluno.nome} ${aluno.sobrenome}, C Turma: ${aluno.turma}\n`;
+                mensagem += `Nome: ${aluno.nome} ${aluno.sobrenome}, Matricula: ${aluno.id}, Turma: ${aluno.turma}\n`;
             }
-            alert(output);
+            console.log(mensagem);
+            alert(mensagem);
         } else {
-            alert("Não há alunos inativos.");
+            alert("Não há alunos ativos.");
         }
     },
 
@@ -854,18 +867,39 @@ const metodoAdm = {
         let alunosInativos = alunos.filter(aluno => !aluno.ativo);
 
         if (alunosInativos.length > 0) {
-            let output = `Lista de Alunos Inativos: ${alunosInativos.length}\n\n`;
+            let mensagem = `Lista de Alunos Inativos: ${alunosInativos.length}\n\n`;
             for (const aluno of alunosInativos) {
-                output += `Nome: ${aluno.nome} ${aluno.sobrenome}, Matricula: ${aluno.id}, Turma: ${aluno.turma}\n`;
+                mensagem += `Nome: ${aluno.nome} ${aluno.sobrenome}, Matricula: ${aluno.id}, Turma: ${aluno.turma}\n`;
             }
-            alert(output);
+            console.log(mensagem);
+            alert(mensagem);
         } else {
             alert("Não há alunos inativos.");
         }
     },
 
     AlunosMediaEsperada: function () {
-        // Lógica de retorno de alunos com média esperada
+        const alunosJSON = localStorage.getItem('alunos');
+        const alunos = JSON.parse(alunosJSON);
+        
+        let alunosAprovados = [];
+        for(const aluno of alunos){
+            const notaSomada = aluno.notas.reduce((acc, nota)=> acc + nota, 0);
+            const media = notaSomada / aluno.notas.length;
+            if(media >= 6){
+                aluno.media = media;
+                alunosAprovados.push(aluno);
+            }
+        };
+        if (alunosAprovados.length > 0) {
+            let mensagem = `Alunos aprovados: ${alunosAprovados.length}\n\n`;
+            for (const aluno of alunosAprovados) {
+                mensagem += `Nome: ${aluno.nome} ${aluno.sobrenome}, Turma: ${aluno.turma}, Média: ${aluno.media.toFixed(2)}\n`;
+            }
+            alert(mensagem);
+        } else {
+            alert('Não há alunos aprovados com média maior que 6.');
+        }
     },
 
     relatorioCompleto: function () {
@@ -923,7 +957,7 @@ function processo() {
                             validacoes.reset();
                             return;
                         case "4":
-                            metodoAdm.retornarListaCompletaAlunos();
+                            metodoAdm.ListaCompletaAlunos();
                             validacoes.reset();
                             return;
                         case "5":
@@ -947,7 +981,7 @@ function processo() {
                             validacoes.reset();
                             return;
                         case "10":
-                            metodoAdm.retornarAlunosMediaEsperada();
+                            metodoAdm.AlunosMediaEsperada();
                             validacoes.reset();
                             return;
                         case "11":
