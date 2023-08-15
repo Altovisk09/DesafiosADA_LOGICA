@@ -658,6 +658,38 @@ const validacoes = {
             return false;
         }
     },
+    validarIdade: function (data) {
+        const partesData = data.split('-');
+        const diaNascimento = parseInt(partesData[0]);
+        const mesNascimento = parseInt(partesData[1]);
+        const anoNascimento = parseInt(partesData[2]);
+
+        const hoje = new Date();
+        const anoAtual = hoje.getFullYear();
+        const mesAtual = hoje.getMonth() + 1; // Os meses são indexados de 0 a 11
+
+        const idadeMinima = 16;
+
+        let idade = anoAtual - anoNascimento;
+
+        // Verifica se já fez aniversário neste ano
+        if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < diaNascimento)) {
+            idade--;
+        }
+
+        if (idade < idadeMinima) {
+            return false;
+        }
+
+        return true;
+    },
+    validarEmail: function (email) {
+        if (email.includes('@') && (email.includes('.com') || email.includes('.com.br'))) {
+            return true;
+        } else {
+            return false;
+        }
+    },
     reset: function () {
         window.location.reload();;
     }
@@ -673,7 +705,7 @@ const metodoAluno = {
             const turmas = JSON.parse(turmasJSON);
 
             const info = {
-                id: alunos ? alunos.length + 1 : 1, // Gera o id em diferentes circunstâncias.
+                id: alunos ? alunos.length + 1 : 1,
                 nome: prompt('Insira seu nome'),
                 sobrenome: prompt('Insira seu sobrenome'),
                 cpf: prompt('Insira seu CPF'),
@@ -684,21 +716,42 @@ const metodoAluno = {
                 ativo: true
             };
 
-            // Validar o CPF
+            if (
+                info.nome === '' &&
+                info.sobrenome === '' &&
+                info.cpf === '' &&
+                info.turma === '' &&
+                info.notas === ''
+            ) {
+                alert('Por favor, preencha todos os campos.');
+                resolve();
+                return;
+            }
+
             if (!validacoes.validarCpf(info.cpf)) {
                 alert('CPF inválido ou já cadastrado.');
-                resolve(); // Importante resolver a Promise mesmo em caso de erro.
+                resolve();
                 return;
             }
 
-            // Validar a turma
             if (!validacoes.validarTurma(info.turma)) {
                 alert('Turma inexistente ou a turma atingiu o limite máximo de alunos');
-                resolve(); // Importante resolver a Promise mesmo em caso de erro.
+                resolve();
+                return
+            }
+
+            if (!validacoes.validarIdade(info.nascimento)) {
+                alert('O aluno deve ter no mínimo 16 anos de idade.');
+                resolve();
                 return;
             }
 
-            // Realizar o cadastro do aluno na base de dados
+            if (!validacoes.validarEmail(info.email)) {
+                alert('O formato do e-mail do aluno não é válido.');
+                resolve();
+                return;
+            }
+
             const turmaSelecionada = turmas.find(turma => turma.id === info.turma);
             turmaSelecionada.alunos.push(info.id);
             alunos.push(info);
@@ -742,6 +795,7 @@ const metodoAluno = {
                     case '5':
                         let novoNascimento = prompt('Digite a nova data de nascimento:');
                         aluno.nascimento = novoNascimento || aluno.nascimento;
+                        
                         break;
                     case '6':
                         continuar = false;
@@ -811,18 +865,23 @@ const metodoAdm = {
             professor: prompt('Quem será o professor responsável?'),
             alunos: []
         };
-        //   validar possibilidade de criar uma nova turma
+
+        if (newTurma.nome === '' || newTurma.professor === '') {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
         if (!validacoes.validarIdCriacaoDeTurma(newTurma.nome)) {
             return alert(`Sigla já utilizada.`);
         }
-        if (!validacoes.validarQtdCriacaoDeTurma) {
-            return alert(`Quantidade mmaxima de turmas já existentes.`);
+        if (!validacoes.validarQtdCriacaoDeTurma()) {
+            return alert(`Quantidade maxima de turmas já existentes.`);
         }
 
         turmas.push(newTurma);
         localStorage.setItem('turmas', JSON.stringify(turmas));
         alert(`Turma ${newTurma.id}, vulgo classe ${newTurma.nome} cadastrada com sucesso.`);
     },
+
     removerAluno: function () {
         const alunosJSON = localStorage.getItem('alunos');
         const alunos = JSON.parse(alunosJSON);
@@ -834,14 +893,14 @@ const metodoAdm = {
         let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId);
         if (!alunoEncontrado) {
             alert('Aluno não encontrado')
-        } else if (!alunoEncontrado.ativo){
+        } else if (!alunoEncontrado.ativo) {
             const alunosAtt = alunos.filter(alunos => alunos.id !== alunoEncontrado.id);
             const turmasAtt = turmas.map(turma => {
                 if (turma.alunos.includes(alunoEncontrado.id)) {
                     alert(`Informações e cadastro do aluno ${alunoEncontrado.nome} ${alunoEncontrado.sobrenome}.`)
                     return {
                         ...turma,
-                        alunos: turma.alunos.filter(id => id !== alunoEncontrado.id);
+                        alunos: turma.alunos.filter(id => id !== alunoEncontrado.id),
                     };
                 }
                 return turma;
@@ -853,6 +912,7 @@ const metodoAdm = {
             alert('Aluno se encontra ativo no momento, não será possível apagar suas informações.');
         }
     },
+
     atualizarInfoAluno: function () {
         const alunosJSON = localStorage.getItem('alunos');
         let alunos = JSON.parse(alunosJSON);
@@ -893,7 +953,7 @@ const metodoAdm = {
                         break;
                     case '6':
                         // Adicionar aluno à nova turma
-                      
+
                         break;
                     case '7':
                         continuar = false;
@@ -909,6 +969,7 @@ const metodoAdm = {
             alert('Matricula não encontrada. Verifique o numero da matricula digitado.');
         }
     },
+
     AlunoEspecifico: function () {
         const alunosJSON = localStorage.getItem('alunos');
         const turmasJSON = localStorage.getItem('turmas')
@@ -971,16 +1032,18 @@ const metodoAdm = {
             alert('Aluno não encontrado.');
         }
     },
-    
+
     desativarAluno: function () {
         const alunosJSON = localStorage.getItem('alunos');
         const alunos = JSON.parse(alunosJSON);
 
         let alunoId = prompt('Insira a matricula que deseja desativar.');
         let alunoEncontrado = alunos.find(aluno => aluno.id == alunoId)
-        if(alunoEncontrado.ativo){
-            
-        }else{
+        if (alunoEncontrado.ativo) {
+            alunoEncontrado.ativo = false;
+            localStorage.setItem('alunos', JSON.stringify(alunos));
+            alert(`Matrícula ${alunoId} desativada com sucesso.`);
+        } else {
             alert('A matricula inserida não existe ou já está desativada.');
         }
     },
@@ -1045,15 +1108,56 @@ const metodoAdm = {
     },
 
     relatorioCompleto: function () {
-        // Lógica de geração de relatório completo
-    },
+        const alunosJSON = localStorage.getItem('alunos');
+        const alunos = JSON.parse(alunosJSON);
+        const turmasJSON = localStorage.getItem('turmas');
+        const turmas = JSON.parse(turmasJSON);
+
+        const totalAlunos = alunos.length;
+        const totalTurmas = turmas.length;
+
+        let totalAlunosAtivos = 0;
+        let totalAlunosInativos = 0;
+
+        let relatorioPorTurma = '';
+
+        for (const turma of turmas) {
+            const alunosNaTurma = turma.alunos.length;
+            let alunosAprovados = 0;
+            let alunosReprovados = 0;
+
+            for (const alunoId of turma.alunos) {
+                const aluno = alunos.find(aluno => aluno.id === alunoId);
+                if (aluno && aluno.notas.length > 0) {
+                    const media = aluno.notas.reduce((total, nota) => total + parseFloat(nota), 0) / aluno.notas.length;
+                    if (media >= 6) {
+                        alunosAprovados++;
+                    } else {
+                        alunosReprovados++;
+                    }
+                }
+            }
+
+            totalAlunosAtivos += alunosNaTurma;
+            totalAlunosInativos += alunosNaTurma - turma.alunos.length;
+
+            relatorioPorTurma += `\nTurma ${turma.nome}:\n`;
+            relatorioPorTurma += `Alunos aprovados: ${alunosAprovados}\n`;
+            relatorioPorTurma += `Alunos reprovados: ${alunosReprovados}\n\n`;
+        }
+
+        const relatorioCompleto = `Relatório Completo:\n\nTotal de Alunos: ${totalAlunos}\nTotal de Turmas: ${totalTurmas}\n\nTotal de Alunos Ativos: ${totalAlunosAtivos}\nTotal de Alunos Inativos: ${totalAlunosInativos}\n${relatorioPorTurma}`;
+
+        console.log(relatorioCompleto);
+        alert(relatorioCompleto);
+    }
 
 };
 
 function processo() {
     carregarDadosDoLocalStorage().then(() => {
         while (true) {
-            const valor = prompt('Digite o número que corresponder com sua condição atual:\n\n1: Sou aluno\n2: Quero me matricular em uma instituição.\n3: Sou ADM\n4: Encerrar');
+            const valor = prompt('Digite o número que corresponder com sua condição atual:\n\n1: Sou aluno\n2: Quero me matricular\n3: Sou ADM\n4: Encerrar');
 
             switch (valor) {
                 case "1":
@@ -1078,13 +1182,13 @@ function processo() {
                     }
                     break;
                 case "2":
-                    alert('Você selecionou a opção "Quero me matricular em uma instituição".');
+                    alert('Você selecionou a opção "Quero me matricular".');
                     metodoAluno.cadastrarAluno();
                     validacoes.reset();
                     return;
                 case "3":
                     alert('Você selecionou a opção "Sou ADM".');
-                    const opcaoADM = prompt('Digite o número que corresponder à ação desejada:\n\n1: Cadastrar turma\n2: Atualizar informações de aluno\n3: Cancelamento da matrícula\n4: Retornar a lista completa de alunos\n5: Retornar quantas turmas tem na escola\n6: Calcular a média do aluno\n7: Desativar aluno\n8: Retornar a lista apenas com alunos ativos\n9: Retornar a lista apenas com alunos inativos\n10: Retornar os alunos com a média esperada\n11: Relatório completo\n12: Buscar aluno');
+                    const opcaoADM = prompt('Digite o número que corresponder à ação desejada:\n\n1: Cadastrar turma\n2: Atualizar informações de aluno\n3: Cancelamento da matrícula\n4: Retornar a lista completa de alunos\n5: Retornar quantas turmas tem na escola\n6: Calcular a média do aluno\n7: Remover aluno\n8: Retornar a lista apenas com alunos ativos\n9: Retornar a lista apenas com alunos inativos\n10: Retornar os alunos com a média esperada\n11: Relatório completo\n12: Buscar aluno');
 
                     switch (opcaoADM) {
                         case "1":
@@ -1096,7 +1200,7 @@ function processo() {
                             validacoes.reset();
                             return;
                         case "3":
-                            metodoAdm.cancelarMatricula();
+                            metodoAdm.desativarAluno();
                             validacoes.reset();
                             return;
                         case "4":
